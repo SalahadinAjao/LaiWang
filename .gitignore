@@ -1,0 +1,5 @@
+# Project exclude paths
+/aggregator/target/
+/api-module/target/
+/common-module/target/
+/web-module/target/
