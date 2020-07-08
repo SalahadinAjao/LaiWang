@@ -3,6 +3,8 @@ package com.hlt.service.Impl;
 import com.hlt.dao.UserDao;
 import com.hlt.entity.UserEntity;
 import com.hlt.service.UserService;
+import com.hlt.utils.RRException;
+import com.hlt.validators.Assert;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,5 +52,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity queryByUserName(String userName) {
         return userDao.queryByUserName(userName);
+    }
+
+    @Override
+    public long login(String mobile, String password) {
+        UserEntity userEntity = queryByMobile(mobile);
+
+        Assert.isNull(userEntity,"手机号或密码错误");
+
+        if (!userEntity.getPassword().equals(DigestUtils.sha256Hex(password))){
+            throw new RRException("手机号或密码错误");
+        }
+        return userEntity.getUserId();
+    }
+
+    @Override
+    public void update(UserEntity entity) {
+        userDao.update(entity);
+    }
+
+    @Override
+    public void updatePassword(UserEntity entity) {
+         userDao.updatePassword(entity);
     }
 }

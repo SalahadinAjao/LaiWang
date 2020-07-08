@@ -18,6 +18,33 @@
         <result property="weixin_openid" column="weixin_openid"/>
     </resultMap>
 
+	<update id="updatePassword" parameterType="com.hlt.entity.UserEntity">
+		update nideshop_user
+		<set>
+			<if test="password != null">`password` = #{password}</if>
+		</set>
+		where id=#{userId}
+	</update>
+
+	<update id="update" parameterType="com.hlt.entity.UserEntity">
+		update nideshop_user
+		<set>
+			<if test="username != null">`username` = #{username},</if>
+			<if test="password != null">`password` = #{password},</if>
+			<if test="gender != null">`gender` = #{gender},</if>
+			<if test="birthday != null">`birthday` = #{birthday},</if>
+			<if test="register_time != null">`register_time` = #{register_time},</if>
+			<if test="last_login_time != null">`last_login_time` = #{last_login_time},</if>
+			<if test="last_login_ip != null">`last_login_ip` = #{last_login_ip},</if>
+			<if test="user_level_id != null">`user_level_id` = #{user_level_id},</if>
+			<if test="nickname != null">`nickname` = #{nickname},</if>
+			<if test="mobile != null">`mobile` = #{mobile},</if>
+			<if test="register_ip != null">`register_ip` = #{register_ip},</if>
+			<if test="avatar != null">`avatar` = #{avatar},</if>
+			<if test="weixin_openid != null">`weixin_openid` = #{weixin_openid}</if>
+		</set>
+		where id = #{userId}
+	</update>
 	<select id="queryByUserName" parameterType="String" resultType="com.hlt.entity.UserEntity">
 		select * from nideshop_user where `username` = #{value}
 	</select>
@@ -59,7 +86,7 @@
 	</select>
 
 	<select id="queryByMobile" resultMap="userMap">
-		select * from nideshop_user where `mobile` = #{mobile}
+		select * from nideshop_user where `mobile` = #{value}
 	</select>
 
 	<select id="queryObject" resultMap="userMap">

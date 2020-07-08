@@ -1,9 +1,12 @@
 package com.hlt.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hlt.annotations.CurrentLoginUser;
+import com.hlt.annotations.SkipAuth;
 import com.hlt.entity.UserEntity;
 import com.hlt.service.UserService;
 import com.hlt.utils.MD5;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @SkipAuth
     @PostMapping("/register")
     public Object register() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         JSONObject jsonRequest = getJsonRequest();
@@ -41,9 +45,7 @@ public class UserController extends BaseController {
             return toResponsObject(401,"用户名已存在","");
         }else {
 
-            MD5 md5 = new MD5();
-
-            String newPass = md5.EncodeByMd5(passWord);
+            String newPass = DigestUtils.sha256Hex(passWord);
 
             UserEntity user = new UserEntity();
 
@@ -98,12 +100,45 @@ public class UserController extends BaseController {
 
     @PostMapping("/mobile")
     @ResponseBody
-    public Object queryByMobile(){
-        JSONObject jsonRequest = getJsonRequest();
-        String mobile = jsonRequest.getString("mobile");
+    public Object queryByMobile(@CurrentLoginUser UserEntity loginUser){
+       /* JSONObject jsonRequest = getJsonRequest();
+        String mobile = jsonRequest.getString("mobile");*/
+
+        String mobile = loginUser.getMobile();
 
         UserEntity userVo = userService.queryByMobile(mobile);
         return toResponsSuccess(userVo);
+    }
+
+    @PostMapping("/updatemobile")
+    public Object updateUserMobile(@CurrentLoginUser UserEntity loginUser){
+        JSONObject jsonRequest = getJsonRequest();
+        String mobile = jsonRequest.getString("mobile");
+        Long userId = loginUser.getUserId();
+
+        UserEntity userEntity = userService.queryObject(userId);
+
+        userEntity.setMobile(mobile);
+
+        userService.update(userEntity);
+
+        return toResponsMsgSuccess("手机号更新成功");
+    }
+
+    @PostMapping("/updatepass")
+    public Object updatePassWord(@CurrentLoginUser UserEntity loginUser){
+        JSONObject jsonRequest = getJsonRequest();
+        String password = jsonRequest.getString("password");
+
+        String sha256Hex = DigestUtils.sha256Hex(password);
+
+        UserEntity userEntity = userService.queryObject(loginUser.getUserId());
+
+        userEntity.setPassword(sha256Hex);
+
+        userService.updatePassword(userEntity);
+
+        return toResponsMsgSuccess("密码更新成功");
     }
 
 }

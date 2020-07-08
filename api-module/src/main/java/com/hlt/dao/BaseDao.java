@@ -16,7 +16,7 @@ public interface BaseDao<T> {
 
     void saveBatch(List<T> list);
 
-    int update(T t);
+    void update(T t);
 
     int update(Map<String, Object> map);
 
@@ -30,7 +30,7 @@ public interface BaseDao<T> {
 
     List<T> queryList(Map<String, Object> map);
 
-    List<T> queryList(Object id);
+    List<T> queryList(Long userId);
 
     int queryTotal(Map<String, Object> map);
 

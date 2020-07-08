@@ -5,6 +5,7 @@ import com.hlt.entity.TokenEntity;
 import com.hlt.service.TokenService;
 import com.hlt.utils.CharUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @email 437547058@qq.com
  * @Version 1.0
  */
+@Service
 public class TokenServiceImpl implements TokenService {
 
     private final static Long EXPIRE = 3600 * 24 * 30L;
@@ -31,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Map<String, Object> createToken(long userId) {
         //使用随机数生成一个token
-        String token = CharUtils.getRandomNumStr(532);
+        String token = CharUtils.getRandomNumStr(232);
         Date nowDate = new Date();
         //设置token过期时间
         Date expireDate = new Date(nowDate.getTime() + EXPIRE * 1000);
@@ -64,6 +66,7 @@ public class TokenServiceImpl implements TokenService {
 
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("token",tokenEntity.getToken());
+        hashMap.put("userId",tokenEntity.getUserId());
         // hashMap.put("expireTime",format1);
         return hashMap;
     }

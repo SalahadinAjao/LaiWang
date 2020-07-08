@@ -15,6 +15,24 @@
 
     <mvc:annotation-driven/>
 
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--使用/**让前端访问所有api都需要被拦截授权，除非有skipAuth注解的方法-->
+            <mvc:mapping path="/**"/>
+            <bean class="com.hlt.interceptors.TokenAuthorizationInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--入参解析器-->
+    <mvc:annotation-driven>
+        <mvc:argument-resolvers>
+            <bean id="currentLoginUserResolver" class="com.hlt.resolvers.CurrentLoginUserHandlerMethodArgumentResolver">
+                <property name="userService" ref="userServiceImpl"/>
+            </bean>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
+
     <context:component-scan base-package="com.hlt.controller"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

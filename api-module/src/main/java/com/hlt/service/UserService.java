@@ -20,4 +20,10 @@ public interface UserService {
     UserEntity queryObject(Long userId);
 
     UserEntity queryByUserName(String userName);
+
+    public long login(String mobile, String password);
+
+    void update(UserEntity entity);
+
+    void updatePassword(UserEntity entity);
 }
