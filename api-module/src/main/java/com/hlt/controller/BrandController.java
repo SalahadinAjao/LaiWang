@@ -90,4 +90,10 @@ public class BrandController extends BaseController {
 
         return toResponsSuccess(pageUtils);
     }
+
+    @PostMapping("/detail")
+    public Object detail(@RequestParam Integer id){
+        BrandEntity brandEntity = brandService.queryObject(id);
+        return toResponsSuccess(brandEntity);
+    }
 }

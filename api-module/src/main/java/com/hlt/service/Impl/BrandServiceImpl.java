@@ -33,4 +33,9 @@ public class BrandServiceImpl implements BrandService {
     public int queryTotal(Map<String, Object> map) {
         return brandDao.queryTotal(map);
     }
+
+    @Override
+    public BrandEntity queryObject(Integer id) {
+        return brandDao.queryObject(id);
+    }
 }

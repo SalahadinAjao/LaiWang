@@ -11,6 +11,7 @@ import java.util.Map;
  * 数据库复杂查询参数封装类
  */
 public class Query extends LinkedHashMap<String, Object> {
+
     private static final long serialVersionUID = 1L;
     //当前页码
     private int page;
@@ -24,7 +25,7 @@ public class Query extends LinkedHashMap<String, Object> {
         this.page=Integer.parseInt(map.get("page").toString());
         this.limit = Integer.parseInt(map.get("limit").toString());
 
-        //设置每页的查询起点
+        //设置每页的查询起点，限制从数据库的第offset+1项开始查询
         this.put("offset",(page-1)*limit);
         //当前页码
         this.put("page",page);

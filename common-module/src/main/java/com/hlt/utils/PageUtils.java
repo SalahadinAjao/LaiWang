@@ -16,12 +16,12 @@ public class PageUtils implements Serializable {
 
     private static final long serialVersionUID = 1L;
     //总记录数
-    private int count;
+    private int totalResultNum;
     //每页记录数
     private int numsPerPage;
     //总页数
     private int totalPages;
-    //当前页数
+    //当前是第几页
     private int currentPage;
     //列表数据
     private List<?> data;
@@ -38,23 +38,23 @@ public class PageUtils implements Serializable {
      * @param numsPerPage 每页记录数
      * @param currentPage 当前页数
      */
-    public PageUtils(List<?> list, int count, int numsPerPage, int currentPage) {
+    public PageUtils(List<?> list, int totalResultNum, int numsPerPage, int currentPage) {
         this.data = list;
-        this.count = count;
+        this.totalResultNum = totalResultNum;
         this.numsPerPage = numsPerPage;
         this.currentPage = currentPage;
-        this.totalPages = (int) Math.ceil((double) count / numsPerPage);
+        this.totalPages = (int) Math.ceil((double) totalResultNum / numsPerPage);
     }
 
     public PageUtils(PageInfo pageInfo) {
-        this.count = (int) pageInfo.getTotal();
+        this.totalResultNum = (int) pageInfo.getTotal();
         this.numsPerPage = pageInfo.getPageSize();
         this.currentPage = pageInfo.getPageNum();
         this.totalPages = pageInfo.getPages();
     }
 
-    public int getCount() {
-        return count;
+    public int getTotalResultNum() {
+        return totalResultNum;
     }
 
     public int getNumsPerPage() {
@@ -81,8 +81,8 @@ public class PageUtils implements Serializable {
         return goodsList;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setTotalResultNum(int totalResultNum) {
+        this.totalResultNum = totalResultNum;
     }
 
     public void setNumsPerPage(int numsPerPage) {

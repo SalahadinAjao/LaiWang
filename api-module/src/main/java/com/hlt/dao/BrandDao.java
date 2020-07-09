@@ -22,4 +22,7 @@ public interface BrandDao extends BaseDao<BrandEntity> {
 
     @Override
     int queryTotal(Map<String, Object> map);
+
+    @Override
+    BrandEntity queryObject(Object id);
 }

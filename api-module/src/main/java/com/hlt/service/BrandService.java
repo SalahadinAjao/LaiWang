@@ -18,4 +18,6 @@ public interface BrandService {
     List<BrandEntity> queryList(Map<String,Object> map);
 
     int queryTotal(Map<String,Object> map);
+
+    BrandEntity queryObject(Integer id);
 }
