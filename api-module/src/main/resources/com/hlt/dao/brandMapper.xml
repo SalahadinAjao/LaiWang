@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hlt.dao.BrandDao">
+    <resultMap type="com.hlt.entity.BrandEntity" id="brandMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+        <result property="simple_desc" column="simple_desc"/>
+        <result property="pic_url" column="pic_url"/>
+        <result property="sort_order" column="sort_order"/>
+        <result property="is_show" column="is_show"/>
+        <result property="floor_price" column="floor_price"/>
+        <result property="app_list_pic_url" column="app_list_pic_url"/>
+        <result property="is_new" column="is_new"/>
+        <result property="new_pic_url" column="new_pic_url"/>
+        <result property="new_sort_order" column="new_sort_order"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.hlt.entity.BrandEntity">
+        insert into nideshop_brand(
+        `name`,
+        `list_pic_url`,
+        `simple_desc`,
+        `pic_url`,
+        `sort_order`,
+        `is_show`,
+        `floor_price`,
+        `app_list_pic_url`,
+        `is_new`,
+        `new_pic_url`,
+        `new_sort_order`
+        )values (
+            #{name},
+			#{list_pic_url},
+			#{simple_desc},
+			#{pic_url},
+			#{sort_order},
+			#{is_show},
+			#{floor_price},
+			#{app_list_pic_url},
+			#{is_new},
+			#{new_pic_url},
+			#{new_sort_order}
+        )
+    </insert>
+
+    <select id="queryList" resultMap="brandMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_brand
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_brand
+    </select>
+
+</mapper>
