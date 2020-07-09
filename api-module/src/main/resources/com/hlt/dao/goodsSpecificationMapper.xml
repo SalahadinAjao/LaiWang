@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hlt.dao.GoodsSpecificationDao">
+    <resultMap type="com.hlt.entity.GoodsSpecificationEntity" id="goodsSpecificationMap">
+        <result property="id" column="id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="specification_id" column="specification_id"/>
+        <result property="value" column="value"/>
+        <result property="pic_url" column="pic_url"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.hlt.entity.GoodsSpecificationEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_specification(
+        `goods_id`,
+        `specification_id`,
+        `value`,
+        `pic_url`
+        )values (
+        #{goods_id},
+        #{specification_id},
+        #{value},
+        #{pic_url}
+        )
+    </insert>
+</mapper>

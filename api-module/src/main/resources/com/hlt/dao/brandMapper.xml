@@ -18,7 +18,7 @@
     </resultMap>
 
     <insert id="save" parameterType="com.hlt.entity.BrandEntity">
-        insert into nideshop_brand(
+        insert into brand(
         `name`,
         `list_pic_url`,
         `simple_desc`,
@@ -53,7 +53,7 @@
         <if test="fields == null or fields == ''">
             *
         </if>
-        from nideshop_brand
+        from brand
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -68,11 +68,11 @@
     </select>
 
     <select id="queryTotal" resultType="int">
-        select count(*) from nideshop_brand
+        select count(*) from brand
     </select>
 
     <select id="queryObject" resultMap="brandMap">
-        select * from nideshop_brand where id = #{value}
+        select * from brand where id = #{value}
     </select>
 
 </mapper>
