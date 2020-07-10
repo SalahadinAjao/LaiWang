@@ -20,4 +20,14 @@ public class ProductServiceImpl implements ProductService {
     public void save(ProductEntity entity) {
          productDao.save(entity);
     }
+
+    @Override
+    public void update(ProductEntity entity) {
+        productDao.update(entity);
+    }
+
+    @Override
+    public ProductEntity queryObject(Integer id) {
+        return productDao.queryObject(id);
+    }
 }

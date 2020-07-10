@@ -7,9 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="admin-module" />
-        <module name="api-module" />
-        <module name="web-module" />
         <module name="aggregator" />
+        <module name="web-module" />
+        <module name="api-module" />
         <module name="common-module" />
       </profile>
     </annotationProcessing>

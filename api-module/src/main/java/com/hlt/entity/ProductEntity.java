@@ -16,8 +16,6 @@ public class ProductEntity implements Serializable {
     private Integer id;
     //商品Id
     private Integer goods_id;
-    //产品Id
-    private Integer product_id;
     //商品规格ids
     private String goods_specification_ids;
     //商品序列号
@@ -39,10 +37,6 @@ public class ProductEntity implements Serializable {
 
     public Integer getGoods_id() {
         return goods_id;
-    }
-
-    public Integer getProduct_id() {
-        return product_id;
     }
 
     public String getGoods_specification_ids() {
@@ -79,10 +73,6 @@ public class ProductEntity implements Serializable {
 
     public void setGoods_id(Integer goods_id) {
         this.goods_id = goods_id;
-    }
-
-    public void setProduct_id(Integer product_id) {
-        this.product_id = product_id;
     }
 
     public void setGoods_specification_ids(String goods_specification_ids) {

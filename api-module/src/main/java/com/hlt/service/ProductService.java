@@ -10,4 +10,8 @@ import com.hlt.entity.ProductEntity;
  */
 public interface ProductService {
     void save(ProductEntity entity);
+
+    void update(ProductEntity entity);
+
+    ProductEntity queryObject(Integer id);
 }
