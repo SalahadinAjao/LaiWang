@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hlt.dao.CategoryDao">
+    <resultMap type="com.hlt.entity.CategoryEntity" id="categoryMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="keywords" column="keywords"/>
+        <result property="front_desc" column="front_desc"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="sort_order" column="sort_order"/>
+        <result property="show_index" column="show_index"/>
+        <result property="is_show" column="is_show"/>
+        <result property="banner_url" column="banner_url"/>
+        <result property="icon_url" column="icon_url"/>
+        <result property="img_url" column="img_url"/>
+        <result property="wap_banner_url" column="wap_banner_url"/>
+        <result property="level" column="level"/>
+        <result property="type" column="type"/>
+        <result property="front_name" column="front_name"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="categoryMap">
+        select * from category where id = #{value}
+    </select>
+
+   <select id="queryList" resultMap="categoryMap">
+       select
+       <if test="fileds != null and fields != ''">
+           ${fields}
+       </if>
+       <if test="fields == null or fields == ''">
+           *
+       </if>
+       from category
+       where 1=1
+       <if test="parent_id != null and parent_id != ''">
+           and parent_id = #{parent_id}
+       </if>
+       <!--<if test="notName != null and notName != ''">
+           and 'name' != #{notName}
+       </if>-->
+       <if test="ids != null">
+           and id in
+           <foreach item="item" collection="ids" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+       </if>
+       <choose>
+           <when test="sidx != null and sidx.trim() != ''">
+               order by ${sidx} ${order}
+           </when>
+           <otherwise>
+               order by id asc
+           </otherwise>
+       </choose>
+       <if test="offset != null and limit != null">
+           limit #{offset}, #{limit}
+       </if>
+   </select>
+
+</mapper>

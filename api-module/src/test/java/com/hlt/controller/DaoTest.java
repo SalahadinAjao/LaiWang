@@ -1,9 +1,11 @@
 package com.hlt.controller;
 
 import com.hlt.dao.AddressDao;
+import com.hlt.dao.CategoryDao;
 import com.hlt.dao.TokenDao;
 import com.hlt.dao.UserDao;
 import com.hlt.entity.AddressEntity;
+import com.hlt.entity.CategoryEntity;
 import com.hlt.entity.TokenEntity;
 import com.hlt.entity.UserEntity;
 import org.junit.Test;
@@ -22,16 +24,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:spring/spring-mybatis.xml"})
 public class DaoTest {
    @Autowired
-    AddressDao addressDao;
-   @Autowired
-   UserDao userDao;
+    private CategoryDao categoryDao;
 
    @Test
-   public void updatePass(){
-       UserEntity userEntity = new UserEntity();
-       userEntity.setUserId(68L);
-       userEntity.setPassword("123456");
-
-       userDao.updatePassword(userEntity);
+   public void queryObj(){
+       Integer id = 1010001;
+       CategoryEntity categoryEntity = categoryDao.queryObject(id);
+       System.out.println(categoryEntity.getFront_name());
    }
 }

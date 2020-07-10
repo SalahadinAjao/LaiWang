@@ -33,9 +33,9 @@ public class CategoryEntity implements Serializable {
     private String banner_url;
     //icon链接
     private String icon_url;
-    //图片
+    //图片url
     private String img_url;
-    //手机banner
+    //手机banner url
     private String wap_banner_url;
     //级别
     private String level;
@@ -43,9 +43,9 @@ public class CategoryEntity implements Serializable {
     private Integer type;
     //
     private String front_name;
-
+    //是否已选中
     private Boolean checked;
-
+    //子分类列表
     private List<CategoryEntity> subCategoryList;
 
 

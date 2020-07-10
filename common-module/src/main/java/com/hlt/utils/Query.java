@@ -25,7 +25,7 @@ public class Query extends LinkedHashMap<String, Object> {
         this.page=Integer.parseInt(map.get("page").toString());
         this.limit = Integer.parseInt(map.get("limit").toString());
 
-        //设置每页的查询起点，限制从数据库的第offset+1项开始查询
+        //设置每页的查询起点，限制从数据库的第 offset*limit+1 项开始查询
         this.put("offset",(page-1)*limit);
         //当前页码
         this.put("page",page);
@@ -38,6 +38,8 @@ public class Query extends LinkedHashMap<String, Object> {
         /**
          * 在这一步需要主义sql注入，由于sidx、order是通过拼接SQL实现排序的，会
          * 有SQL注入风险，因此需要有个过滤器。
+         * 最终的query中的属性是：
+         * page , limit , offset , sidx , order
          */
         this.put("sidx",SqlFilter.SqlInject(sidx));
         this.put("order",SqlFilter.SqlInject(order));
