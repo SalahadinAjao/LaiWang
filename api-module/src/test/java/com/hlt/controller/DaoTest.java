@@ -1,18 +1,15 @@
 package com.hlt.controller;
 
-import com.hlt.dao.AddressDao;
-import com.hlt.dao.CategoryDao;
-import com.hlt.dao.TokenDao;
-import com.hlt.dao.UserDao;
-import com.hlt.entity.AddressEntity;
-import com.hlt.entity.CategoryEntity;
-import com.hlt.entity.TokenEntity;
-import com.hlt.entity.UserEntity;
+import com.hlt.dao.*;
+import com.hlt.entity.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Author: houlintao
@@ -24,12 +21,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:spring/spring-mybatis.xml"})
 public class DaoTest {
    @Autowired
-    private CategoryDao categoryDao;
+    private SysRegionDao sysRegionDao;
+   @Test
+   public void queryList(){
+       HashMap hashMap = new HashMap();
+       List list = sysRegionDao.queryList(hashMap);
+       System.out.println(list.get(1));
+   }
 
    @Test
-   public void queryObj(){
-       Integer id = 1010001;
-       CategoryEntity categoryEntity = categoryDao.queryObject(id);
-       System.out.println(categoryEntity.getFront_name());
+   public void queryObject(){
+       SysRegionEntity sysRegionEntity = sysRegionDao.queryObject(1);
+       System.out.println(sysRegionEntity.getName());
    }
 }

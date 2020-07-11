@@ -41,7 +41,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:spring/mybatisConfig.xml"/>
-        <property name="mapperLocations" value="classpath:com/hlt/dao/*.xml"/>
+        <property name="mapperLocations" value="classpath*:com/hlt/dao/*.xml"/>
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -54,4 +54,9 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="springContextUtils" class="com.hlt.utils.SpringContextUtils"/>
+
+    <bean id="regionCacheUtil" class="com.hlt.cache.RegionCacheUtil"
+          init-method="afterPropertiesSet" depends-on="springContextUtils"/>
+    <!--<bean id="regionCacheUtil" class="com.hlt.cache.RegionCacheUtil"/>-->
 </beans>

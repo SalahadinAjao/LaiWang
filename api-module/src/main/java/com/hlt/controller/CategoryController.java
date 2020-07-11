@@ -82,7 +82,6 @@ public class CategoryController extends BaseController {
             params.put("parent_id",currentCategory.getId());
 
             currentCategory.setSubCategoryList(categoryService.queryList(params));
-            System.out.println("currentCategory = " + currentCategory.getFront_name());
         }
 
         returnObj.put("currentCategory", currentCategory);
