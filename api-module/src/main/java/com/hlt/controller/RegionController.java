@@ -6,6 +6,7 @@ import com.hlt.cache.RegionCacheUtil;
 import com.hlt.entity.RegionEntity;
 import com.hlt.entity.SysRegionEntity;
 
+import com.hlt.utils.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,5 +101,32 @@ public class RegionController extends BaseController{
         return toResponsSuccess(new RegionEntity(regionEntity));
     }
 
+    /**
+     * 通过详细的区名获取区号
+     */
+    @SkipAuth
+    @PostMapping("/regionIdsByNames")
+    public Object getRegionIdbyName(String provinceName, String cityName, String districtName){
+        HashMap resultObj = new HashMap<String,Integer>();
+        Integer provinceId = 0;
+        Integer cityId = 0;
+        Integer districtId = 0;
+
+        //如果省名字不是空，则获取该省的id
+        if (provinceName!=null){
+             provinceId = RegionCacheUtil.getProvinceIdByName(provinceName);
+        }
+        if (provinceId != null && !StringUtils.isNullOrEmpty(cityName)){
+            cityId = RegionCacheUtil.getCityIdByName(provinceId,cityName);
+        }
+        if (provinceId != null && cityId != null && !StringUtils.isNullOrEmpty(districtName)){
+            districtId = RegionCacheUtil.getDistrictIdByName(provinceId,cityId,districtName);
+        }
+        resultObj.put("provinceId",provinceId);
+        resultObj.put("cityId",cityId);
+        resultObj.put("districtId", districtId);
+
+        return toResponsSuccess(resultObj);
+    }
 
 }

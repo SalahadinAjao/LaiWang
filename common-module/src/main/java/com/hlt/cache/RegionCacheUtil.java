@@ -126,8 +126,9 @@ public class RegionCacheUtil implements InitializingBean {
             return resultObj;
         }
         if (null != sysRegionEntityList) {
+            //遍历
             for (SysRegionEntity regionEntity : sysRegionEntityList) {
-                if (null != regionEntity.getParentId() && regionEntity.getType().equals(2) && areaId.equals(regionEntity.getParentId())) {
+                if (regionEntity.getParentId() != null && regionEntity.getType().equals(2) && areaId.equals(regionEntity.getParentId())) {
                     resultObj.add(regionEntity);
                 }
             }
@@ -141,27 +142,23 @@ public class RegionCacheUtil implements InitializingBean {
      * @return
      */
     public static List<SysRegionEntity> getChildrenCity(String proviceName) {
-        System.out.println("proviceName = " + proviceName);
-        System.out.println("sysRegionEntityList长度 = " + sysRegionEntityList.size());
 
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
 
-        if (null == proviceName) {
+        if (proviceName == null) {
             return resultObj;
         }
 
-        if (null != sysRegionEntityList) {
+        if (sysRegionEntityList != null) {
 
             for (SysRegionEntity regionEntity : sysRegionEntityList) {
 
-                if (regionEntity.getParentId()!=null && regionEntity.getType().equals(2) &&
+                if (regionEntity.getParentId() != null && regionEntity.getType().equals(2) &&
                         regionEntity.getParentName().equals(proviceName)) {
                     resultObj.add(regionEntity);
-                    System.out.println("resultObj长度 = " + resultObj.size());
                 }
             }
         }
-        System.out.println("外部的resultObj长度 = " + resultObj.size());
         return resultObj;
     }
 
@@ -175,7 +172,7 @@ public class RegionCacheUtil implements InitializingBean {
         if (null == areaId) {
             return resultObj;
         }
-        if (null != sysRegionEntityList) {
+        if (sysRegionEntityList != null) {
             for (SysRegionEntity areaVo : sysRegionEntityList) {
                 if (null != areaVo.getParentId() && areaVo.getType().equals(3) && areaId.equals(areaVo.getParentId())) {
                     resultObj.add(areaVo);
@@ -217,13 +214,10 @@ public class RegionCacheUtil implements InitializingBean {
     public static List<SysRegionEntity> getChildrenByParentId(Integer parentId) {
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
         if (null == parentId) {
-            System.out.println("内部parentId = " + parentId);
             return resultObj;
         }
-        System.out.println("外部parentId = " + parentId);
        // System.out.println("sysRegionEntityList是否为null? " + sysRegionEntityList.isEmpty());
         if (null != sysRegionEntityList) {
-            System.out.println("=============== = ");
             for (SysRegionEntity areaVo : sysRegionEntityList) {
                 if (null != areaVo.getParentId() && parentId.equals(areaVo.getParentId())) {
                     resultObj.add(areaVo);
