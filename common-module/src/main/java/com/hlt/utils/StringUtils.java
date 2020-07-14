@@ -24,26 +24,33 @@ public class StringUtils {
      *@date: 2020/7/12 上午10:50
      * @param object 待转对象
      * @param isCancel 是否去掉空格
-     * @param dataType 数据类型,就是格式化日期对象的模式对象
+     * @param pattern 数据类型,就是格式化日期对象的模式对象
      * 将对象转换为字符串
      */
-    public static String objectToString(Object object, boolean isCancel,String dataType){
+    public static String objectToString(Object object, boolean isCancel,String pattern){
         //如果对象为空，直接返回一个空字符串
         if (object==null){
             return "";
         }else {
             //如果需要去掉空格
             if (isCancel){
-                object.toString().trim();
+               return object.toString().trim();
                 //不需要去掉空格
             }else {
                 //判断dataType中是否有文本,如果有
-              if (StringUtils.hasText(dataType)){
+              if (StringUtils.hasText(pattern)){
                   //object是不是Timestamp类对象或者其子类对象
+                  /**
+                   * 在开发web应用中，针对不同的数据库对各自日期类型的需求，我们需要在程序中对日期类型做各种不同的转换。
+                   * 若对应数据库数据是oracle的Date类型，即只需要年月日的，可以选择使用java.sql.Date类型；
+                   * 若对应的是MSsqlserver数据库的DateTime类型，即需要年月日时分秒的，选择java.sql.Timestamp类型;
+                   * Timestamp 可以精确到小数秒 一般存储的格式：2020-01-29 04:33:38.531
+                   * Timestamp 可以获取当前时间，也可以把字符串装换成Timestamp类型。
+                   */
                   if (object instanceof Timestamp){
-                       return DateUtils.format((Timestamp) object,dataType);
+                       return DateUtils.format((Timestamp) object,pattern);
                   }else if (object instanceof Date){
-                      return DateUtils.format((Timestamp)object,dataType);
+                      return DateUtils.format((Timestamp)object,pattern);
                   }
               }
             }
@@ -63,9 +70,14 @@ public class StringUtils {
         StringBuffer buffer = new StringBuffer();
 
         while (matcher.find()){
+            /**
+             * appendReplacement方法会把匹配到的内容替换为matcher.group(1).toUpperCase()，并且把从上次替换的位置
+             * 到这次替换位置之间的字符串也拿到，然后，加上这次替换后的结果一起追加到StringBuffer里，
+             * 假如这次替换是第一次替换，那就是只追加替换后的字符串了。
+             */
             matcher.appendReplacement(buffer,matcher.group(1).toUpperCase());
         }
-
+        //把最后一次匹配到内容之后的字符串追加到StringBuffer中
         matcher.appendTail(buffer);
         return buffer.toString();
     }

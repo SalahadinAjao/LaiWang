@@ -14,32 +14,35 @@ import java.util.List;
  * @Date:2020/7/10 下午4:03
  * @email 437547058@qq.com
  * @Version 1.0
- * InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，
- * 凡是继承该接口的类，在初始化bean的时候都会执行该方法，即在spring初始化bean的时候，如
- * 果bean实现了InitializingBean接口，会自动调用afterPropertiesSet方法。
+ * InitializingBean接口为bean提供了初始化方法的方式，它只有一个afterPropertiesSet方法，
+ * 凡是继承该接口的类，在初始化bean的时候都会执行该方法，即在spring初始化bean的时候如
+ * 果bean实现了InitializingBean接口会自动调用afterPropertiesSet方法。
  * 此接口的实现类需要<bean></bean>配置.
+ *
+ * 地理区域缓存工具类，实现InitializingBean接口，保证在spring框架刚启动后就能保证sysRegionEntityList
+ * 中有全国区域数据。
  */
 
 public class RegionCacheUtil implements InitializingBean {
 
+    /**
+     * 这是一个静态变量，一旦赋值就会一直存在
+     */
     public static List<SysRegionEntity> sysRegionEntityList;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("即将调用init()方法");
         init();
     }
 
-    public  void init(){
-        System.out.println("执行了init方法");
+    public void init(){
+        /**
+         * 通过SpringContextUtils获取到sysRegionDao bean对象。
+         */
         SysRegionDao sysRegionDao = SpringContextUtils.getBean(SysRegionDao.class);
-        System.out.println("SpringContextUtils返回的sysRegionDao="+sysRegionDao);
         if (sysRegionDao != null){
-            System.out.println("sysRegionDao不为null，即将调用sysRegionDao的queryList方法");
-            //出错点找到了，静态变量sysRegionEntityList赋值失败导致的空指针异常
-           // List<SysRegionEntity> regionEntityList = sysRegionDao.queryList(new HashMap<String, Object>());
+            //通过 sysRegionDao对象查询数据库得到所有地区列表
             sysRegionEntityList = sysRegionDao.queryList(new HashMap<String, Object>());
-            System.out.println("调用sysRegionDao的queryList方法返回的值赋值给sysRegionEntityList后的长度="+sysRegionEntityList.size());
         }
     }
     /**
@@ -50,9 +53,12 @@ public class RegionCacheUtil implements InitializingBean {
     public static List<SysRegionEntity> getAllCountry() {
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
         if (null != sysRegionEntityList) {
-            for (SysRegionEntity areaVo : sysRegionEntityList) {
-                if (areaVo.getType().equals(0)) {
-                    resultObj.add(areaVo);
+            /**
+             * 这一步待优化，4万多个数据一个个遍历代价有点大
+             */
+            for (SysRegionEntity country : sysRegionEntityList) {
+                if (country.getType().equals(0)) {
+                    resultObj.add(country);
                 }
             }
         }
@@ -68,9 +74,9 @@ public class RegionCacheUtil implements InitializingBean {
         System.out.println("执行获取所有省份的getAllProvince方法");
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
         if (null != sysRegionEntityList) {
-            for (SysRegionEntity regionEntity : sysRegionEntityList) {
-                if (regionEntity.getType().equals(1)) {
-                    resultObj.add(regionEntity);
+            for (SysRegionEntity province : sysRegionEntityList) {
+                if (province.getType().equals(1)) {
+                    resultObj.add(province);
                 }
             }
         }
@@ -86,9 +92,9 @@ public class RegionCacheUtil implements InitializingBean {
         System.out.println("执行获取所有城市的getAllCity方法");
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
         if (null != sysRegionEntityList) {
-            for (SysRegionEntity areaVo : sysRegionEntityList) {
-                if (areaVo.getType().equals(2)) {
-                    resultObj.add(areaVo);
+            for (SysRegionEntity city : sysRegionEntityList) {
+                if (city.getType().equals(2)) {
+                    resultObj.add(city);
                 }
             }
         }
@@ -100,15 +106,15 @@ public class RegionCacheUtil implements InitializingBean {
      *
      * @return
      */
-    public static List<SysRegionEntity> getAllProviceByParentId(Integer areaId) {
+    public static List<SysRegionEntity> getAllProviceByParentId(Integer countryId) {
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
-        if (null == areaId) {
+        if (null == countryId) {
             return resultObj;
         }
         if (null != sysRegionEntityList) {
-            for (SysRegionEntity areaVo : sysRegionEntityList) {
-                if (null != areaVo.getParentId() && areaVo.getType().equals(1) && areaId.equals(areaVo.getParentId())) {
-                    resultObj.add(areaVo);
+            for (SysRegionEntity province : sysRegionEntityList) {
+                if (null != province.getParentId() && province.getType().equals(1) && countryId.equals(province.getParentId())) {
+                    resultObj.add(province);
                 }
             }
         }
@@ -120,16 +126,16 @@ public class RegionCacheUtil implements InitializingBean {
      *
      * @return
      */
-    public static List<SysRegionEntity> getChildrenCity(Integer areaId) {
+    public static List<SysRegionEntity> getChildrenCity(Integer cityId) {
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
-        if (null == areaId) {
+        if (null == cityId) {
             return resultObj;
         }
         if (null != sysRegionEntityList) {
             //遍历
-            for (SysRegionEntity regionEntity : sysRegionEntityList) {
-                if (regionEntity.getParentId() != null && regionEntity.getType().equals(2) && areaId.equals(regionEntity.getParentId())) {
-                    resultObj.add(regionEntity);
+            for (SysRegionEntity city : sysRegionEntityList) {
+                if (city.getParentId() != null && city.getType().equals(2) && cityId.equals(city.getParentId())) {
+                    resultObj.add(city);
                 }
             }
         }
@@ -151,11 +157,11 @@ public class RegionCacheUtil implements InitializingBean {
 
         if (sysRegionEntityList != null) {
 
-            for (SysRegionEntity regionEntity : sysRegionEntityList) {
+            for (SysRegionEntity city : sysRegionEntityList) {
 
-                if (regionEntity.getParentId() != null && regionEntity.getType().equals(2) &&
-                        regionEntity.getParentName().equals(proviceName)) {
-                    resultObj.add(regionEntity);
+                if (city.getParentId() != null && city.getType().equals(2) &&
+                        city.getParentName().equals(proviceName)) {
+                    resultObj.add(city);
                 }
             }
         }
@@ -167,15 +173,15 @@ public class RegionCacheUtil implements InitializingBean {
      *
      * @return
      */
-    public static List<SysRegionEntity> getChildrenDistrict(Integer areaId) {
+    public static List<SysRegionEntity> getChildrenDistrict(Integer cityId) {
         List<SysRegionEntity> resultObj = new ArrayList<SysRegionEntity>();
-        if (null == areaId) {
+        if (null == cityId) {
             return resultObj;
         }
         if (sysRegionEntityList != null) {
-            for (SysRegionEntity areaVo : sysRegionEntityList) {
-                if (null != areaVo.getParentId() && areaVo.getType().equals(3) && areaId.equals(areaVo.getParentId())) {
-                    resultObj.add(areaVo);
+            for (SysRegionEntity district : sysRegionEntityList) {
+                if (null != district.getParentId() && district.getType().equals(3) && cityId.equals(district.getParentId())) {
+                    resultObj.add(district);
                 }
             }
         }

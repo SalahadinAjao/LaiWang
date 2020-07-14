@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hlt.dao.GoodsInOrderDao">
+    <resultMap type="com.hlt.entity.GoodsInOrderEntity" id="goodsInOrderMap">
+        <result property="id" column="id"/>
+        <result property="order_id" column="order_id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="goods_sn" column="goods_sn"/>
+        <result property="product_id" column="product_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="market_price" column="market_price"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="goods_specifition_name_value" column="goods_specifition_name_value"/>
+        <result property="is_real" column="is_real"/>
+        <result property="goods_specifition_ids" column="goods_specifition_ids"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.hlt.entity.GoodsInOrderEntity" useGeneratedKeys="true" keyProperty="id">
+              insert into goods_in_order
+                     (
+                        `order_id`,
+                        `goods_id`,
+                        `goods_name`,
+                        `goods_sn`,
+                        `product_id`,
+                        `quantity`,
+                        `market_price`,
+                        `retail_price`,
+                        `goods_specifition_name_value`,
+                        `is_real`,
+                        `goods_specifition_ids`,
+                        `list_pic_url`
+                     )values
+                     (
+                        #{order_id},
+			            #{goods_id},
+			            #{goods_name},
+			            #{goods_sn},
+			            #{product_id},
+			            #{quantity},
+			            #{market_price},
+			            #{retail_price},
+			            #{goods_specifition_name_value},
+			            #{is_real},
+			            #{goods_specifition_ids},
+			            #{list_pic_url}
+                     )
+    </insert>
+
+</mapper>
