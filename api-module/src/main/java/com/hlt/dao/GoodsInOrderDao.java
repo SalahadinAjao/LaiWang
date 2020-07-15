@@ -1,7 +1,11 @@
 package com.hlt.dao;
 
 import com.hlt.entity.GoodsInOrderEntity;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: houlintao
@@ -13,4 +17,9 @@ import org.springframework.stereotype.Repository;
 public interface GoodsInOrderDao extends BaseDao<GoodsInOrderEntity>{
     @Override
     int save(GoodsInOrderEntity goodsInOrderEntity);
+
+    List<GoodsInOrderEntity> queryList(@Param("order_id") Integer order_id);
+
+    @Override
+    List<GoodsInOrderEntity> queryList(Map<String, Object> map);
 }

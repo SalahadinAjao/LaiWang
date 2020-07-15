@@ -13,4 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface GoodsSpecificationDao extends BaseDao<GoodsSpecificationEntity>{
     @Override
     int save(GoodsSpecificationEntity goodsSpecificationEntity);
+
+    @Override
+    GoodsSpecificationEntity queryObject(Object id);
 }

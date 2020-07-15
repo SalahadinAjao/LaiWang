@@ -2,6 +2,9 @@ package com.hlt.service;
 
 import com.hlt.entity.OrderEntity;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/14 上午7:03
@@ -15,4 +18,8 @@ public interface OrderService {
     OrderEntity queryObject(Integer id);
 
     void update(OrderEntity entity);
+
+    int queryTotal();
+
+    List<OrderEntity> queryList(Map<String,Object> map);
 }

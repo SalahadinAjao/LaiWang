@@ -6,6 +6,9 @@ import com.hlt.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/14 上午7:04
@@ -30,5 +33,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void update(OrderEntity entity) {
         orderDao.update(entity);
+    }
+
+    @Override
+    public int queryTotal() {
+        return orderDao.queryTotal();
+    }
+
+    @Override
+    public List<OrderEntity> queryList(Map<String, Object> map) {
+        return orderDao.queryList(map);
     }
 }

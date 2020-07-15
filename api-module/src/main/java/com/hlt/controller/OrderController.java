@@ -2,10 +2,13 @@ package com.hlt.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hlt.annotations.CurrentLoginUser;
+import com.hlt.entity.GoodsInOrderEntity;
 import com.hlt.entity.OrderEntity;
 import com.hlt.entity.UserEntity;
+import com.hlt.service.GoodsInOrderService;
 import com.hlt.service.OrderService;
 import com.hlt.utils.ShippingIdGenerator;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Author: houlintao
@@ -28,6 +29,8 @@ import java.util.Random;
 public class OrderController extends BaseController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private GoodsInOrderService goodsInOrderService;
 
 
     @PostMapping("save")
@@ -52,13 +55,25 @@ public class OrderController extends BaseController {
         OrderEntity entity = new OrderEntity();
         entity.setOrder_sn(order_sn);
         entity.setUser_id(user_id);
-
+        entity.setAdd_time(time);
         Integer orderstatus = jsonRequest.getInteger("orderstatus");
         entity.setOrder_status(orderstatus);
+
 
         Integer shippingstatus = jsonRequest.getInteger("shippingstatus");
         entity.setShipping_status(shippingstatus);
 
+        String shippingcode = jsonRequest.getString("shippingcode");
+        entity.setShipping_code(shippingcode);
+
+        String shipping_no = jsonRequest.getString("shipping_no");
+        entity.setShipping_no(shipping_no);
+
+        Integer shipping_id = jsonRequest.getInteger("shipping_id");
+        entity.setShipping_id(shipping_id);
+
+        String shipping_name = jsonRequest.getString("shipping_name");
+        entity.setShipping_name(shipping_name);
         Integer paystatus = jsonRequest.getInteger("paystatus");
         entity.setPay_status(paystatus);
 
@@ -86,12 +101,6 @@ public class OrderController extends BaseController {
         String postscript = jsonRequest.getString("postscript");
         entity.setPostscript(postscript);
 
-        Integer shippingid = jsonRequest.getInteger("shippingid");
-        entity.setShipping_id(shippingid);
-
-        String shippingname = jsonRequest.getString("shippingname");
-        entity.setShipping_name(shippingname);
-
         String pay_id = ShippingIdGenerator.generateShippingId();
         entity.setPay_id(pay_id);
 
@@ -113,7 +122,10 @@ public class OrderController extends BaseController {
         BigDecimal goods_total_price = jsonRequest.getBigDecimal("goods_total_price");
         entity.setGoods_total_price(goods_total_price);
 
-       orderService.save(entity);
+        String order_type = jsonRequest.getString("order_type");
+        entity.setOrder_type(order_type);
+
+        orderService.save(entity);
 
        return toResponsObject(200,"订单保存成功",entity);
     }
@@ -140,5 +152,46 @@ public class OrderController extends BaseController {
             e.printStackTrace();
         }
         return toResponsFail("提交失败");
+    }
+
+    /**
+     * 根据订单id获取对应订单详情
+     */
+    @PostMapping("/detail")
+    public Object detailInfo(@CurrentLoginUser UserEntity loginUser,Integer orderId){
+        if (orderId == null){
+            return toResponsFail("请输入订单id");
+        }
+        //根据id查询对应的订单实体
+        OrderEntity entity = orderService.queryObject(orderId);
+
+        if (entity == null){
+            return toResponsFail("订单不存在");
+        }
+        //判断订单的userId与当前操作的userId是否相同
+        if (!loginUser.equals(entity.getUser_id())){
+            return toResponsFail("无权查看");
+        }
+        //如果满足上述条件则处理订单中的商品
+        HashMap param = new HashMap();
+        param.put("order_id",orderId);
+
+        Map resultMap = new HashMap();
+
+        List<GoodsInOrderEntity> list = goodsInOrderService.queryList(param);
+        //如果订单创建成功等待付款
+        if (entity.getOrder_status()==0){
+            //此时用户可以对订单对象进行的操作
+            Map handleOption = entity.getHandleOption();
+
+            resultMap.put("orderEntity",entity);
+            resultMap.put("goodsEntities",list);
+            resultMap.put("handlerOPtions",handleOption);
+
+            //获取订单的快递信息
+            if (!StringUtils.isEmpty(entity.getShipping_code()) && !StringUtils.isEmpty(entity.getShipping_no())){
+
+            }
+        }
     }
 }

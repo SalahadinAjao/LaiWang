@@ -18,6 +18,26 @@
         <result property="list_pic_url" column="list_pic_url"/>
     </resultMap>
 
+    <select id="queryList" resultMap="goodsInOrderMap">
+        select * from goods_in_order
+        <where>
+            <if test="order_id != null and order_id != ''">
+                and order_id = #{order_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
     <insert id="save" parameterType="com.hlt.entity.GoodsInOrderEntity" useGeneratedKeys="true" keyProperty="id">
               insert into goods_in_order
                      (

@@ -41,6 +41,7 @@ public class GoodsInOrderEntity implements Serializable {
     //图片链接
     private String list_pic_url;
 
+
     public Integer getId() {
         return id;
     }

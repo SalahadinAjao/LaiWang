@@ -2,6 +2,7 @@ package com.hlt.controller;
 
 import com.hlt.dao.*;
 import com.hlt.entity.*;
+import com.hlt.utils.Query;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +21,19 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/spring-mybatis.xml"})
 public class DaoTest {
+
    @Autowired
-    private SysRegionDao sysRegionDao;
-   @Test
-   public void queryList(){
-       HashMap hashMap = new HashMap();
-       List list = sysRegionDao.queryList(hashMap);
-       System.out.println(list.get(1));
-   }
+   private GoodsInOrderDao goodsInOrderDao;
 
    @Test
-   public void queryObject(){
-       SysRegionEntity sysRegionEntity = sysRegionDao.queryObject(1);
-       System.out.println(sysRegionEntity.getName());
+   public void queryGoodsInOrder(){
+
+       HashMap param = new HashMap();
+       param.put("order_id",20);
+       List<GoodsInOrderEntity> goodsInOrderEntities = goodsInOrderDao.queryList(param);
+       for (GoodsInOrderEntity entity:goodsInOrderEntities){
+           System.out.println(entity.getGoods_name());
+       }
    }
+
 }

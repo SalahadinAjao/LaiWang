@@ -19,6 +19,8 @@
         <result property="postscript" column="postscript"/>
         <result property="shipping_id" column="shipping_id"/>
         <result property="shipping_name" column="shipping_name"/>
+        <result property="shipping_code" column="shipping_code"/>
+        <result property="shipping_no" column="shipping_no"/>
         <result property="pay_id" column="pay_id"/>
         <result property="pay_name" column="pay_name"/>
         <result property="shipping_fee" column="shipping_fee"/>
@@ -35,10 +37,34 @@
         <result property="parent_id" column="parent_id"/>
         <result property="coupon_price" column="coupon_price"/>
         <result property="callback_status" column="callback_status"/>
-        <result property="shipping_no" column="shipping_no"/>
         <result property="full_cut_price" column="full_cut_price"/>
         <result property="order_type" column="order_type"/>
     </resultMap>
+
+    <select id="queryList" resultMap="orderMap">
+        select * from t_order
+        <where>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_order
+    </select>
 
     <update id="update" parameterType="com.hlt.entity.OrderEntity">
         update t_order
@@ -58,6 +84,8 @@
             <if test="postscript != null">`postscript` = #{postscript},</if>
             <if test="shipping_id != null">`shipping_id` = #{shipping_id},</if>
             <if test="shipping_name != null">`shipping_name` = #{shipping_name},</if>
+            <if test="shipping_code != null">`shipping_code` = #{shipping_code},</if>
+            <if test="shipping_no != null">`shipping_no` = #{shipping_no},</if>
             <if test="pay_id != null">`pay_id` = #{pay_id},</if>
             <if test="pay_name != null">`pay_name` = #{pay_name},</if>
             <if test="shipping_fee != null">`shipping_fee` = #{shipping_fee},</if>
@@ -74,15 +102,17 @@
             <if test="parent_id != null">`parent_id` = #{parent_id},</if>
             <if test="coupon_price != null">`coupon_price` = #{coupon_price},</if>
             <if test="callback_status != null">`callback_status` = #{callback_status},</if>
-            <if test="shipping_no != null">`shipping_no` = #{shipping_no},</if>
             <if test="full_cut_price != null">`full_cut_price` = #{full_cut_price},</if>
-            <if test="order_type != null">`order_type` = #{order_type}</if>
+            <if test="order_type != null">`order_type` = #{order_type},</if>
         </set>
         where id = #{id}
     </update>
 
     <select id="queryObject" resultMap="orderMap">
-        select * from t_order where id = #{value}
+        select a.*,b.code as shipping_code
+        from t_order a
+        left join t_shipping b on a.shipping_id = b.id
+        where a.id = #{value}
     </select>
 
     <insert id="save" parameterType="com.hlt.entity.OrderEntity" useGeneratedKeys="true" keyProperty="id">
@@ -102,6 +132,8 @@
              postscript,
              shipping_id,
              shipping_name,
+             shipping_code,
+             shipping_no,
              pay_id,
              pay_name,
              shipping_fee,
@@ -118,7 +150,6 @@
              parent_id,
              coupon_price,
              callback_status,
-             shipping_no,
              full_cut_price,
              order_type
         )values(
@@ -137,6 +168,8 @@
              #{postscript},
              #{shipping_id},
              #{shipping_name},
+             #{shipping_code},
+             #{shipping_no},
              #{pay_id},
              #{pay_name},
              #{shipping_fee},
@@ -153,7 +186,6 @@
              #{parent_id},
              #{coupon_price},
              #{callback_status},
-             #{shipping_no},
              #{full_cut_price},
              #{order_type}
         )

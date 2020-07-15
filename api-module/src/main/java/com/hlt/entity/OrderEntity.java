@@ -1,8 +1,12 @@
 package com.hlt.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,8 +17,6 @@ import java.util.Map;
  */
 public class OrderEntity implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    //主键
     private Integer id;
     //订单序列号
     private String order_sn;
@@ -50,17 +52,19 @@ public class OrderEntity implements Serializable {
     private String postscript;
     //快递公司Id
     private Integer shipping_id;
-
+    //快递公司code
+    private String shipping_code;
     //快递公司名称
     private String shipping_name;
-
-    //付款id
+    //快递号
+    private String shipping_no;
+    //付款
     private String pay_id;
     //
     private String pay_name;
     //快递费用
     private BigDecimal shipping_fee;
-    //实际需要支付的金额
+    //实际需要支付的金额，就是总金额除去积分和优惠券的金额
     private BigDecimal actual_price;
     // 积分
     private Integer integral;
@@ -70,11 +74,11 @@ public class OrderEntity implements Serializable {
     private BigDecimal order_total_price;
     //商品总价
     private BigDecimal goods_total_price;
-    //订单创建时间
+    //新增订单时间，比如2月2日新建订单保存进了购物车或者缓存，2月3日确认，2月3日23点付款
     private Date add_time;
-    //订单确认日期
+    //确认时间
     private Date confirm_time;
-    //付款日期
+    //付款时间
     private Date pay_time;
     //配送费用
     private Integer freight_price;
@@ -86,11 +90,124 @@ public class OrderEntity implements Serializable {
     private BigDecimal coupon_price;
     //
     private Integer callback_status;
-
-    private String shipping_no;
-    private BigDecimal full_cut_price; //订单满减
     //
+    private Integer goodsCount; //订单的商品
+    private String order_status_text;//订单状态的处理
+    private Map handleOption; //可操作的选项
+    private BigDecimal full_cut_price; //订单满减
+    private String full_region;//区县
+    //订单类型，有购物车和普通两个类型
     private String order_type;
+
+    /**
+     * 获取用户的详细收货地址
+     */
+    public String getFull_region() {
+        if (StringUtils.isNotEmpty(full_region)){
+            return full_region;
+        }else {
+            StringBuffer stringBuffer = new StringBuffer();
+            if (StringUtils.isNotEmpty(this.country)){
+                stringBuffer.append(this.country).append(" ");
+            }
+            if (StringUtils.isNotEmpty(this.province)){
+                stringBuffer.append(this.province).append(" ");
+            }
+            if (StringUtils.isNotEmpty(this.city)){
+                stringBuffer.append(this.city).append(" ");
+            }
+            if (StringUtils.isNotEmpty(this.district)){
+                stringBuffer.append(this.district).append(" ");
+            }
+            if (StringUtils.isNotEmpty(this.address)){
+                stringBuffer.append(this.address).append(" ");
+            }
+            this.full_region = stringBuffer.toString();
+
+            return this.full_region;
+        }
+    }
+
+    public void setOrder_status_text(String order_status_text) {
+        this.order_status_text = order_status_text;
+    }
+
+    public String getOrder_status_text() {
+        if (order_status != null && StringUtils.isNotEmpty(order_status_text)){
+            order_status_text = "未付款";
+
+            switch (order_status){
+                case 0:
+                    order_status_text = "未付款";
+                    break;
+                case 201:
+                    order_status_text = "待发货";
+                    break;
+                case 300:
+                    order_status_text = "待收货";
+                    break;
+                case 301:
+                    order_status_text = "已完成";
+                    break;
+                case 200:
+                    order_status_text = "已付款";
+                    break;
+                case 101:
+                    order_status_text = "订单已取消";
+                    break;
+                case 401:
+                    order_status_text = "没有发货，退款";
+                    break;
+                case 402:
+                    order_status_text = "已退货";
+                    break;
+            }
+        }
+        return order_status_text;
+    }
+
+    /**
+     * 获取用户在特定订单状态下可以对订单进行的操作
+     */
+    public Map getHandleOption() {
+        handleOption = new HashMap();
+        handleOption.put("cancel", false);
+        handleOption.put("delete", false);
+        handleOption.put("pay", false);
+        handleOption.put("comment", false);
+        handleOption.put("delivery", false);
+        handleOption.put("confirm", false);
+        handleOption.put("return", false);
+        handleOption.put("buy", false);
+
+        if (order_status == 101) {
+            //订单已取消，可以再次购买
+            handleOption.put("buy", true);
+        }
+
+        //如果订单没有被取消，且没有支付，则可支付，可取消
+        if (order_status == 0) {
+            handleOption.put("cancel", true);
+            handleOption.put("pay", true);
+        }
+
+        //如果订单已付款，没有发货，则可退款操作
+        if (order_status == 201) {
+            handleOption.put("cancel", true);
+        }
+
+        //如果订单已经发货，没有收货，则可确认收货
+        if (order_status == 300) {
+            handleOption.put("confirm", true);
+        }
+
+        //如果订单已经支付，且已经收货，则可完成交易、评论和再次购买
+        if (order_status == 301) {
+            handleOption.put("comment", true);
+            handleOption.put("buy", true);
+        }
+        return handleOption;
+    }
 
     public Integer getId() {
         return id;
@@ -152,8 +269,16 @@ public class OrderEntity implements Serializable {
         return shipping_id;
     }
 
+    public String getShipping_code() {
+        return shipping_code;
+    }
+
     public String getShipping_name() {
         return shipping_name;
+    }
+
+    public String getShipping_no() {
+        return shipping_no;
     }
 
     public String getPay_id() {
@@ -188,14 +313,15 @@ public class OrderEntity implements Serializable {
         return goods_total_price;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date getAdd_time() {
         return add_time;
     }
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date getConfirm_time() {
         return confirm_time;
     }
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date getPay_time() {
         return pay_time;
     }
@@ -220,8 +346,8 @@ public class OrderEntity implements Serializable {
         return callback_status;
     }
 
-    public String getShipping_no() {
-        return shipping_no;
+    public Integer getGoodsCount() {
+        return goodsCount;
     }
 
     public BigDecimal getFull_cut_price() {
@@ -292,8 +418,16 @@ public class OrderEntity implements Serializable {
         this.shipping_id = shipping_id;
     }
 
+    public void setShipping_code(String shipping_code) {
+        this.shipping_code = shipping_code;
+    }
+
     public void setShipping_name(String shipping_name) {
         this.shipping_name = shipping_name;
+    }
+
+    public void setShipping_no(String shipping_no) {
+        this.shipping_no = shipping_no;
     }
 
     public void setPay_id(String pay_id) {
@@ -360,8 +494,8 @@ public class OrderEntity implements Serializable {
         this.callback_status = callback_status;
     }
 
-    public void setShipping_no(String shipping_no) {
-        this.shipping_no = shipping_no;
+    public void setGoodsCount(Integer goodsCount) {
+        this.goodsCount = goodsCount;
     }
 
     public void setFull_cut_price(BigDecimal full_cut_price) {

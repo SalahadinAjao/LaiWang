@@ -6,6 +6,9 @@ import com.hlt.service.GoodsInOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/13 上午9:34
@@ -19,5 +22,10 @@ public class GoodsInOrderServiceImpl implements GoodsInOrderService {
     @Override
     public void save(GoodsInOrderEntity goodsInOrderEntity) {
         goodsInOrderDao.save(goodsInOrderEntity);
+    }
+
+    @Override
+    public List<GoodsInOrderEntity> queryList(Map<String, Object> map) {
+       return goodsInOrderDao.queryList(map);
     }
 }
