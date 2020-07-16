@@ -25,7 +25,7 @@ public interface UserDao extends BaseDao<UserEntity> {
     UserEntity queryByUserName(String userName);
 
     @Override
-    void update(UserEntity entity);
+    int update(UserEntity entity);
 
     void updatePassword(UserEntity entity);
 }

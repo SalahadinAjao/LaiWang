@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductDao extends BaseDao<ProductEntity> {
     @Override
-    void update(ProductEntity productEntity);
+    int update(ProductEntity productEntity);
 
     @Override
     ProductEntity queryObject(Object id);

@@ -3,22 +3,22 @@ package com.hlt.service.Impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hlt.service.ShippingBirdService;
+import com.hlt.utils.MD5;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: houlintao
  * @Date:2020/7/15 下午12:27
  * @email 437547058@qq.com
  * @Version 1.0
+ * 快递鸟服务类，内部封装了调用快递鸟查询快递信息的接口方法，此类中的所有方法如MD5加密方法， base64加密方法等
+ * 都由快递鸟提供，详情http://www.kdniao.com/documents-demo
  */
 @Service
 public class ShippingBirdServiceImpl implements ShippingBirdService {
@@ -27,8 +27,10 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
     private String EBusinessID = "";
     //电商加密私钥，快递鸟提供，注意保管，不要泄漏
     private String AppKey = "";
-    //请求url
+    //获取快递轨迹信息的请求url
     private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
+    //测试地址
+    private String TestURL = "http://sandboxapi.kdniao.com:8080/kdniaosandbox/gateway/exterfaceInvoke.json";
 
     /**
      * 通过json方式追踪订单物流信息
@@ -41,7 +43,7 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
         List<Map<String,Object>> resultList = new ArrayList();
 
         /**
-         * 根据官方要求，请求内容需进行URL(utf-8)编码，请求内容JSON格式，须和DataType一致
+         * 根据官方要求，请求内容需进行URL(utf-8)编码，请求内容要设置为JSON格式，须和DataType一致
          * OrderCode:订单编号;
          * ShipperCode:快递公司编码,必填，对应京东的青龙配送编码，也叫商家编码，
          *             格式：数字＋字母＋数字，9 位数字加一个字母，共10 位,
@@ -59,9 +61,9 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
         String urlEncoder = urlEncoder(requestData, "UTF-8");
         param.put("RequestData",urlEncoder);
         param.put("EBusinessID", EBusinessID);
-        param.put("RequestType", "8002");
+        param.put("RequestType", "1002");
         //数据签名
-        String dataSign = encrypt(requestData, AppKey, "UTF_8");
+        String dataSign = encrypt(requestData, AppKey, "UTF-8");
         param.put("DataSign",urlEncoder(dataSign,"UTF-8"));
         param.put("DataType", "2");
 
@@ -82,6 +84,25 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
         return resultList;
     }
 
+    public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        ShippingBirdServiceImpl birdService = new ShippingBirdServiceImpl();
+
+        List tracesByJson = birdService.getOrderTracesByJson("SF", "SF1023459852");
+
+        System.out.println(tracesByJson);
+
+        String old = "http:www.baidu.com";
+        String md5 = birdService.MD5(old, "UTF-8");
+        System.out.println("md5 = " + md5);
+        byte[] bytes = md5.getBytes("UTF-8");
+        System.out.println("bytes = " + bytes);
+        for (int i=0;i<bytes.length;i++){
+            System.out.println("bytes[i] = " + bytes[i]);
+        }
+        String encrypt = birdService.encrypt(old,"","UTF-8");
+        System.out.println("encrypt = " + encrypt);
+    }
+
     /**
      * @param content 待加密的内容
      * @param keyValue AppKey
@@ -90,7 +111,9 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
     @Override
     public String encrypt(String content, String keyValue, String charset) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (keyValue != null){
+            //把(请求内容(未编码)+AppKey)进行MD5加密
             String md5Str = MD5(content + keyValue, charset);
+            //然后Base64编码
             String base64Str = base64(md5Str, charset);
             return base64Str;
         }
@@ -122,11 +145,12 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
              * 在涉及到 byte 类型向 int 类型转化的时候使用 & 0xff 按未与操作
              * 保持二进制补码的一致性，防止出错。
              * 这里bytes[i]是占据8个二进制位,int占据32位，需要补位24位
+             * 这里是将 bytes 数组中的每一位的 byte 数据转换为 int
              */
             int intVal = bytes[i] & 0xff;
             //0xf换算成十进制是15，即 intVal <=15
             if (intVal <= 0xf){
-                //是字符的"0" 即当 intVal <= 15时就往 stringBuffer中存“0”
+                //是字符的"0" 即当 intVal <= 15时就往 stringBuffer中存“0”，注意是字符串的0，不是 byte 或者 int 类型的0
                 stringBuffer.append("0");
             }
             //intVal>15就将此int值转化为16进制的字符，如aa
@@ -138,6 +162,8 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
     /**
      * @param str 待编码的字符串
      * @param charset 编码的字符集
+     * Base64 是一种将二进制数据编码的方式，正如
+     * UTF-8和UTF-16是将文本数据编码的方式一样，所以如果你需要将二进制数据编码为文本数据，那么Base64可以实现这样的需求
      */
     @Override
     public String base64(String str, String charset) throws UnsupportedEncodingException {
@@ -199,8 +225,12 @@ public class ShippingBirdServiceImpl implements ShippingBirdService {
     }
 
     /**
-     * url解析器,通过指定的解析模式将字符串string解析为
-     * application/x-www-form-urlencoded 格式
+     * url解析器,通过指定的解析模式将字符串string
+     * 使用 application/x-www-form-urlencoded 格式解析
+     * 在接收到请求后服务器知道参数用符号&间隔，如果参数值中需要&则必须对其进行编码，编码格式就是application/x-www-form-urlencoded（
+     * 将键值对的参数用&连接起来，如果有空格，将空格转换为+号；有特殊符号，将特殊符号转换为ASCII HEX值；
+     * application/x-www-form-urlencoded： 窗体数据被编码为名称/值对，这里是从我们项目的后端向快递鸟的服务器发送请求的，不存在窗体表单数据，
+     * 那么我们可以使用一个简单的String作为请求数据，将其解析为名/值对
      */
     @Override
     public String urlEncoder(String str, String charset) throws UnsupportedEncodingException {

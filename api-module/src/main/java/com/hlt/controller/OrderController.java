@@ -7,6 +7,7 @@ import com.hlt.entity.OrderEntity;
 import com.hlt.entity.UserEntity;
 import com.hlt.service.GoodsInOrderService;
 import com.hlt.service.OrderService;
+import com.hlt.service.ShippingBirdService;
 import com.hlt.utils.ShippingIdGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,6 +34,8 @@ public class OrderController extends BaseController {
     private OrderService orderService;
     @Autowired
     private GoodsInOrderService goodsInOrderService;
+    @Autowired
+    private ShippingBirdService birdService;
 
 
     @PostMapping("save")
@@ -155,10 +160,10 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 根据订单id获取对应订单详情
+     * 根据订单id获取对应订单详情，包括订单信息和快递信息
      */
     @PostMapping("/detail")
-    public Object detailInfo(@CurrentLoginUser UserEntity loginUser,Integer orderId){
+    public Object detailInfo(@CurrentLoginUser UserEntity loginUser,Integer orderId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (orderId == null){
             return toResponsFail("请输入订单id");
         }
@@ -177,21 +182,30 @@ public class OrderController extends BaseController {
         param.put("order_id",orderId);
 
         Map resultMap = new HashMap();
-
+        //一个order对象中可能包含多个商品
         List<GoodsInOrderEntity> list = goodsInOrderService.queryList(param);
-        //如果订单创建成功等待付款
+        //如果订单创建成功，等待付款
         if (entity.getOrder_status()==0){
-            //此时用户可以对订单对象进行的操作
+            //此时用户可以对订单对象进行的操作有继续付款，或者取消订单
             Map handleOption = entity.getHandleOption();
 
             resultMap.put("orderEntity",entity);
             resultMap.put("goodsEntities",list);
             resultMap.put("handlerOPtions",handleOption);
 
-            //获取订单的快递信息
+            /**
+             * 获取订单的快递信息,由于需要调用快递鸟的API获取即时物流追踪信息，因此需要保证订单对应的物流公司代码
+             * 和物流单号不为空，这是快递鸟api的硬性要求;
+             */
             if (!StringUtils.isEmpty(entity.getShipping_code()) && !StringUtils.isEmpty(entity.getShipping_no())){
+                List traces = birdService.getOrderTracesByJson(entity.getShipping_code(), entity.getShipping_no());
 
+                if (traces == null){
+                    return toResponsObject(400,"没有此订单的快递信息，请核对","");
+                }
+                resultMap.put("shippingTraces",traces);
             }
         }
+        return toResponsSuccess(resultMap);
     }
 }

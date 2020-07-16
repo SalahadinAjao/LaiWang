@@ -21,8 +21,7 @@ public interface OrderDao extends BaseDao<OrderEntity> {
     @Override
     OrderEntity queryObject(Object id);
 
-    @Override
-    void update(OrderEntity entity);
+    int update(OrderEntity entity);
 
     @Override
     int queryTotal();
