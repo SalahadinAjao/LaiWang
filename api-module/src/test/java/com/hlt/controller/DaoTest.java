@@ -21,19 +21,13 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/spring-mybatis.xml"})
 public class DaoTest {
+    @Autowired
+    private GoodsDao goodsDao;
 
-   @Autowired
-   private GoodsInOrderDao goodsInOrderDao;
-
-   @Test
-   public void queryGoodsInOrder(){
-
-       HashMap param = new HashMap();
-       param.put("order_id",20);
-       List<GoodsInOrderEntity> goodsInOrderEntities = goodsInOrderDao.queryList(param);
-       for (GoodsInOrderEntity entity:goodsInOrderEntities){
-           System.out.println(entity.getGoods_name());
-       }
-   }
-
+    @Test
+    public void query(){
+        int goods_id = 1010001;
+        GoodsEntity entity = goodsDao.queryObject(goods_id);
+        System.out.println(entity.getName());
+    }
 }

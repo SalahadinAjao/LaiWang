@@ -10,6 +10,7 @@ import com.hlt.service.OrderService;
 import com.hlt.service.ShippingBirdService;
 import com.hlt.utils.ShippingIdGenerator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,25 @@ public class OrderController extends BaseController {
     @Autowired
     private ShippingBirdService birdService;
 
+    //确认收货
+    @PostMapping("/confirm")
+    public Object confirmGetGoods(Integer orderId){
+        OrderEntity order = orderService.queryObject(orderId);
+        if (order == null){
+            return toResponsFail("订单不存在");
+        }
+        //301表示订单已完成
+        order.setOrder_status(301);
+        //订单运输状态2表示已收货
+        order.setShipping_status(2);
+        order.setConfirm_time(new Date());
+        int update = orderService.update(order);
+
+        if (update>0){
+            return toResponsSuccess("确认收货成功");
+        }
+        return toResponsFail("提交失败");
+    }
 
     @PostMapping("save")
     public Object save(@CurrentLoginUser UserEntity loginUser){
@@ -137,7 +157,7 @@ public class OrderController extends BaseController {
     /**
      * 确认收货
      */
-    @PostMapping("/confirm")
+    @PostMapping("/confirmorder")
     public Object confirmOrder(@CurrentLoginUser UserEntity loginUser,Integer orderId){
 
         try {

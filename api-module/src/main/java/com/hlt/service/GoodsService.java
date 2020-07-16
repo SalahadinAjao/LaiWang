@@ -11,4 +11,6 @@ import com.hlt.entity.GoodsEntity;
 public interface GoodsService {
 
     void save(GoodsEntity goodsEntity);
+
+    GoodsEntity queryObject(Integer goodsId);
 }

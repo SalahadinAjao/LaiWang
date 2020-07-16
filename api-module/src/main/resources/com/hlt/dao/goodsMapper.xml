@@ -105,4 +105,8 @@
         )
     </insert>
 
+    <select id="queryObject" resultMap="goodsMap">
+        select * from goods where id = #{value}
+    </select>
+
 </mapper>

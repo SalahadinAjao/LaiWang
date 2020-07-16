@@ -31,8 +31,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void update(OrderEntity entity) {
-        orderDao.update(entity);
+    public int update(OrderEntity entity) {
+       return orderDao.update(entity);
     }
 
     @Override

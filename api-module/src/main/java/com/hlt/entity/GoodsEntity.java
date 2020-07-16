@@ -81,6 +81,8 @@ public class GoodsEntity implements Serializable {
     // 产品Id
     private Integer product_id;
 
+
+
     public Integer getId() {
         return id;
     }

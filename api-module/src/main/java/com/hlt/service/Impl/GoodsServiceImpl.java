@@ -20,4 +20,9 @@ public class GoodsServiceImpl implements GoodsService {
     public void save(GoodsEntity goodsEntity) {
         goodsDao.save(goodsEntity);
     }
+
+    @Override
+    public GoodsEntity queryObject(Integer goodsId) {
+        return goodsDao.queryObject(goodsId);
+    }
 }

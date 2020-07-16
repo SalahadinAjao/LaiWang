@@ -15,4 +15,7 @@ public interface TokenDao extends BaseDao<TokenEntity> {
     TokenEntity queryByUserId(long userId);
 
     TokenEntity queryByToken(@Param("token") String token);
+
+    @Override
+    int update(TokenEntity tokenEntity);
 }

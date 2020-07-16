@@ -17,7 +17,7 @@ public interface OrderService {
 
     OrderEntity queryObject(Integer id);
 
-    void update(OrderEntity entity);
+    int update(OrderEntity entity);
 
     int queryTotal();
 
