@@ -10,6 +10,7 @@ import java.math.BigDecimal;
  * @Version 1.0
  */
 public class ProductEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     //主键

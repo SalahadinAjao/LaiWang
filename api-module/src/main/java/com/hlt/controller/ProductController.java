@@ -35,12 +35,14 @@ public class ProductController extends BaseController {
         BigDecimal market_price = jsonRequest.getBigDecimal("market_price");
         BigDecimal retail_price = jsonRequest.getBigDecimal("retail_price");
         String goods_name = jsonRequest.getString("goods_name");
+        String list_pic_url = jsonRequest.getString("list_pic_url");
 
         ProductEntity productEntity = new ProductEntity();
 
         productEntity.setGoods_id(goods_id);
         productEntity.setGoods_specification_ids(goods_specification_ids);
         productEntity.setGoods_sn(goods_sn);
+        productEntity.setList_pic_url(list_pic_url);
         productEntity.setGoods_number(goods_number);
         productEntity.setMarket_price(market_price);
         productEntity.setRetail_price(retail_price);

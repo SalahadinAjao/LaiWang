@@ -6,6 +6,9 @@ import com.hlt.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/16 下午6:19
@@ -24,5 +27,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public int update(CartEntity cartEntity) {
        return cartDao.update(cartEntity);
+    }
+
+    @Override
+    public List<CartEntity> queryList(Map map) {
+        return cartDao.queryList(map);
     }
 }

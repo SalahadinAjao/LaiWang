@@ -2,6 +2,9 @@ package com.hlt.service;
 
 import com.hlt.entity.GoodsSpecificationEntity;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/9 上午11:18
@@ -10,4 +13,6 @@ import com.hlt.entity.GoodsSpecificationEntity;
  */
 public interface GoodsSpecificatioService {
     void save(GoodsSpecificationEntity goodsSpecificationEntity);
+
+    List<GoodsSpecificationEntity> queryList(Map map);
 }

@@ -3,6 +3,9 @@ package com.hlt.dao;
 import com.hlt.entity.GoodsSpecificationEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author: houlintao
  * @Date:2020/7/9 上午11:10
@@ -16,4 +19,7 @@ public interface GoodsSpecificationDao extends BaseDao<GoodsSpecificationEntity>
 
     @Override
     GoodsSpecificationEntity queryObject(Object id);
+
+    @Override
+    List<GoodsSpecificationEntity> queryList(Map<String, Object> map);
 }

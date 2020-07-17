@@ -16,4 +16,7 @@ public interface ProductDao extends BaseDao<ProductEntity> {
 
     @Override
     ProductEntity queryObject(Object id);
+
+    @Override
+    int save(ProductEntity entity);
 }

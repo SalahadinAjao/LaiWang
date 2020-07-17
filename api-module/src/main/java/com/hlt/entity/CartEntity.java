@@ -40,6 +40,16 @@ public class CartEntity implements Serializable {
     private Integer checked;
     //商品图片
     private String list_pic_url;
+    //product表中的商品零售价
+    private BigDecimal retail_product_price;
+
+    public BigDecimal getRetail_product_price() {
+        return retail_product_price;
+    }
+
+    public void setRetail_product_price(BigDecimal retail_product_price) {
+        this.retail_product_price = retail_product_price;
+    }
 
     public Integer getId() {
         return id;
