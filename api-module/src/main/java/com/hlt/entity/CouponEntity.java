@@ -11,6 +11,7 @@ import java.util.Date;
  * @Date:2020/7/17 下午4:06
  * @email 437547058@qq.com
  * @Version 1.0
+ * 通用的优惠券实体类，它描述的就是商城中商家配置的优惠券。
  */
 public class CouponEntity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,17 +42,17 @@ public class CouponEntity implements Serializable {
     //使用结束时间
     @JsonFormat(pattern = "yyyy年MM月dd日")
     private Date use_end_date;
-    //最小商品金额
+    //使用优惠券商品的最小金额
     private BigDecimal min_goods_amount;
     //优惠券说明
     private String coupon_txt;
-    //优惠券会员Id
+    //优惠券用户Id
     private String user_id;
     //优惠券编码
     private String coupon_number;
     //可用 1:可用 0：不可用
     private Integer enabled = 0;
-    //转发次数
+    //最小转发次数
     private Integer min_transmit_num;
     //优惠券状态 1 可用 2 已用 3 过期
     private Integer coupon_status = 1;
