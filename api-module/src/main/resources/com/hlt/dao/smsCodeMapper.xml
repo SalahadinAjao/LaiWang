@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hlt.dao.SmsLogDao">
+    <resultMap id="smsCodeMap" type="com.hlt.entity.SmsLogEntity">
+        <result property="user_id" column="user_id"/>
+        <result property="phone" column="phone"/>
+        <result property="log_date" column="log_date"/>
+        <result property="sms_code" column="sms_code"/>
+        <result property="send_status" column="send_status"/>
+        <result property="sms_text" column="sms_text"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.hlt.entity.SmsLogEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into t_sms_log
+        (
+            user_id,
+            phone,
+            log_date,
+            sms_code,
+            send_status,
+            sms_text
+        )values
+        (
+             #{user_id},
+             #{phone},
+             #{log_date},
+             #{sms_code},
+             #{send_status},
+             #{sms_text}
+        )
+    </insert>
+
+    <select id="queryTest" resultMap="smsCodeMap">
+        select * from t_sms_log where log_date =(select MAX(log_date) from t_sms_log)
+    </select>
+    <!--获取用户最后一次登录时候的 smsCode-->
+    <select id="querySmsCodeByUserId" resultMap="smsCodeMap">
+        select a.`user_id`,
+               a.`phone`,
+               a.`log_date` as log_date,
+               a.`sms_code`,
+               a.`send_status`,
+               a.`sms_text`
+        from t_sms_log a
+        left join t_sms_log b on a.user_id = b.user_id and b.log_date > a.log_date
+        where 1=1
+        <if test="user_id != null">
+            and a.user_id = #{user_id}
+        </if>
+        limit 0,1
+    </select>
+
+</mapper>

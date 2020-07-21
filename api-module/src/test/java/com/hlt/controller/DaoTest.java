@@ -2,6 +2,7 @@ package com.hlt.controller;
 
 import com.hlt.dao.*;
 import com.hlt.entity.*;
+import com.hlt.service.CouponService;
 import com.hlt.utils.Constants;
 import com.hlt.utils.DateUtils;
 import com.hlt.utils.Query;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,11 +28,39 @@ import java.util.*;
 @ContextConfiguration(locations = {"classpath:spring/spring-mybatis.xml"})
 public class DaoTest {
     @Autowired
-    private UserCouponDao userCouponDao;
+    private SmsLogDao smsLogDao;
+    @Autowired
+    private CouponDao couponDao;
+    @Test
+    public void save() throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2020,06,18,11,25,13);
+        Date time = calendar.getTime();
+        String formatTime = simpleDateFormat.format(time);
+
+        long longTime = simpleDateFormat.parse(formatTime).getTime();
+
+
+        SmsLogEntity smsLog = new SmsLogEntity();
+        smsLog.setUser_id(45L);
+        smsLog.setPhone("13355003033");
+        smsLog.setSend_status(1);
+        smsLog.setSms_code(1949);
+        smsLog.setSms_text("发送成功");
+        smsLog.setLog_date(longTime);
+
+        int save = smsLogDao.save(smsLog);
+        System.out.println(save);
+    }
 
     @Test
-    public void queryByCouponNumber(){
-        UserCouponEntity userCouponEntity = userCouponDao.queryByCouponNumber("HUJ57321");
-        System.out.println(userCouponEntity.getAdd_time());
+    public void queryLastSms(){
+        HashMap param = new HashMap();
+        param.put("user_id",45L);
+        SmsLogEntity smsLogEntity = smsLogDao.querySmsCodeByUserId(param);
+        System.out.println(smsLogEntity.getLog_date());
     }
+
 }

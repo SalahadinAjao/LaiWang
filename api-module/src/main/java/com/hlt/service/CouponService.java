@@ -29,7 +29,10 @@ public interface CouponService {
 
     List<CouponEntity> queryUserCoupons(Map<String, Object> params);
 
-    //查询用户可用的最大优惠券
+    /**
+     * 根据 send_type 查询用户可以领取的最大优惠券，它返回的是一个通用的 CouponEntity 对象，这个对象表示的是新用户
+     * 能够领取的最大金额的优惠券信息，用户领取的优惠券对象UserCouponEntity通过此 CouponEntity 的数据配置自身 。
+     */
     CouponEntity queryMaxUserEnableCoupon(Map<String, Object> params);
     //根据传入的参数，查询用户优惠券列表
     List<CouponEntity> queryCouponList(Map<String, Object> params);

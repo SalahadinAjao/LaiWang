@@ -58,37 +58,6 @@
         select * from user_coupon where coupon_number = #{coupon_number}
     </select>
 
-    <select id="queryList" resultMap="userCouponMap">
-        select a.* from user_coupon a
-        left join coupon b on b.id = a.coupon_id
-        where 1=1
-        <if test="coupon_number != null">
-            and a.coupon_number = #{coupon_number}
-        </if>
-        <if test="user_id != null">
-            and a.user_id = #{user_id}
-        </if>
-        <if test="send_type != null">
-            and b.send_type = #{send_type}
-        </if>
-        <if test="referrer != null">
-            and a.referrer = #{referrer}
-        </if>
-        <if test="source_key != null">
-            and a.source_key = #{source_key}
-        </if>
-        <choose>
-            <when test="sidx != null and sidx.trim() != ''">
-                order by ${sidx} ${order}
-            </when>
-            <otherwise>
-                order by id desc
-            </otherwise>
-        </choose>
-        <if test="offset != null and limit != null">
-            limit #{offset}, #{limit}
-        </if>
-    </select>
 
     <insert id="save" parameterType="com.hlt.entity.UserCouponEntity" useGeneratedKeys="true" keyProperty="id">
         insert into user_coupon

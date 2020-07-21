@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="NettyModuel" />
         <module name="admin-module" />
-        <module name="aggregator" />
         <module name="web-module" />
         <module name="api-module" />
         <module name="common-module" />
+        <module name="aggregator" />
       </profile>
     </annotationProcessing>
   </component>

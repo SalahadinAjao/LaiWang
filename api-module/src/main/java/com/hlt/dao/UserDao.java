@@ -1,5 +1,6 @@
 package com.hlt.dao;
 
+import com.hlt.entity.SmsLogEntity;
 import com.hlt.entity.UserEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
